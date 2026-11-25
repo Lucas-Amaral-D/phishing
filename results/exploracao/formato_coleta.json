@@ -1,0 +1,16 @@
+{
+  "legitimo": {
+    "total": 107851,
+    "https": 107851,
+    "www": 107851,
+    "raiz_sem_parametros": 107851,
+    "formato_combinado": 107851
+  },
+  "phishing": {
+    "total": 79583,
+    "https": 38640,
+    "www": 33452,
+    "raiz_sem_parametros": 57741,
+    "formato_combinado": 812
+  }
+}
