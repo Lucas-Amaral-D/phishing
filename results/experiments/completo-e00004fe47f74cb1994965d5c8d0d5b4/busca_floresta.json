@@ -1,0 +1,74 @@
+{
+  "strategy": "RandomizedSearchCV",
+  "space": {
+    "model__max_depth": [
+      12,
+      24,
+      null
+    ],
+    "model__min_samples_leaf": [
+      2,
+      8
+    ],
+    "model__max_features": [
+      "sqrt",
+      "log2"
+    ],
+    "model__class_weight": [
+      null,
+      "balanced"
+    ]
+  },
+  "folds": 5,
+  "combinations": 2,
+  "metric": "f1",
+  "seconds": 14.789559000026202,
+  "best": {
+    "model__min_samples_leaf": 2,
+    "model__max_features": "sqrt",
+    "model__max_depth": null,
+    "model__class_weight": null
+  },
+  "baseline_holdout": {
+    "fit_s": 2.092565700004343,
+    "inference_s": 0.06785099999979138,
+    "accuracy": 0.9999161191108625,
+    "balanced_accuracy": 0.9998952367649113,
+    "precision": 1.0,
+    "recall": 0.9997904735298226,
+    "specificity": 1.0,
+    "f1": 0.9998952257884259,
+    "f2": 0.999832371799349,
+    "roc_auc": 0.9999999544089991,
+    "average_precision": 0.9999999317423949,
+    "pr_auc_trapezoid": 0.9999999317376292,
+    "mcc": 0.9998253060882006,
+    "fpr": 0.0,
+    "fnr": 0.00020952647017739908,
+    "tn": 21447,
+    "fp": 0,
+    "fn": 3,
+    "tp": 14315
+  },
+  "optimized_holdout": {
+    "fit_s": 1.871734499989543,
+    "inference_s": 0.10424529999727383,
+    "accuracy": 0.9999161191108625,
+    "balanced_accuracy": 0.9998952367649113,
+    "precision": 1.0,
+    "recall": 0.9997904735298226,
+    "specificity": 1.0,
+    "f1": 0.9998952257884259,
+    "f2": 0.999832371799349,
+    "roc_auc": 0.9999999478959992,
+    "average_precision": 0.9999999219950512,
+    "pr_auc_trapezoid": 0.9999999219923285,
+    "mcc": 0.9998253060882006,
+    "fpr": 0.0,
+    "fnr": 0.00020952647017739908,
+    "tn": 21447,
+    "fp": 0,
+    "fn": 3,
+    "tp": 14315
+  }
+}

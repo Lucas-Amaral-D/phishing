@@ -1,0 +1,14 @@
+{
+  "state": "complete",
+  "utc": "2026-11-25T23:42:37.554611+00:00",
+  "quick": false,
+  "python": "3.13.7",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "sklearn": "1.7.2",
+  "seed": 42,
+  "dataset_sha256": "a236549cd369cd80bd478ff8e1779cbf44c58d5c3f79f7a51a1adbed7d06d1c6",
+  "dev_sha256": "6c62b68c3470837c23de42f1f24e9fb3d7635719ca325ef0b9c9e06ccc909fb3",
+  "warnings": [
+    "Could not find the number of physical cores for the following reason:\n[WinError 2] O sistema não pode encontrar o arquivo especificado\nReturning the number of logical cores instead. You can silence this warning by setting LOKY_MAX_CPU_COUNT to the number of cores you want to use."
+  ]
+}
