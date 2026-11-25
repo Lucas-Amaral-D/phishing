@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.env*
+.kaggle/
+kaggle.json
+*.pem
+*.tmp
+data/raw/
+models/*.joblib
