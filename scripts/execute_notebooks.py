@@ -18,5 +18,5 @@ if __name__ == "__main__":
             nbformat.validate(notebook)
             options = {"metadata": {"path": str(ROOT)}}
             executed = NotebookClient(notebook, timeout=120, resources=options).execute()
-            nbformat.write(executed, path)
+            path.write_text(nbformat.writes(executed) + "\n", encoding="utf-8", newline="\n")
             print(f"Executado: {path.name}", flush=True)
