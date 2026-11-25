@@ -13,7 +13,7 @@ from .config import RAW, ROOT, UCI_CSV
 from .data_loader import sha256
 from .evaluation import metrics
 from .feature_audit import scenario_features
-from .splitting import SPLITS, load_rows
+from .splitting import SPLITS, load_rows, target_array
 from .training import MODELS, save_json
 
 matplotlib.use("Agg")
@@ -63,7 +63,7 @@ def evaluate(freeze_path):
         json.dump(record, stream, ensure_ascii=False, indent=2)
     try:
         frame = load_rows("test")
-        truth = 1 - frame.label.to_numpy()
+        truth = target_array(frame)
         variants = scenario_features(frame)
         result = {}
         for key in keys:

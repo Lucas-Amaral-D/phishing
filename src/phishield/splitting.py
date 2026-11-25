@@ -5,13 +5,18 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import GroupShuffleSplit, StratifiedGroupKFold
 
-from .config import RAW, ROOT, UCI_CSV, UCI_CSV_SHA256
+from .config import EXPERIMENT, RAW, ROOT, UCI_CSV, UCI_CSV_SHA256
 from .data_loader import sha256
-from .data_validation import TEXT_COLUMNS
+from .data_validation import TEXT_COLUMNS, encode_target
 from .feature_extraction import domain_group
 
 SPLITS = ROOT / "data" / "splits"
-CONFIG = json.loads((ROOT / "configs/experiment_config.json").read_text(encoding="utf-8"))
+
+
+def target_array(frame):
+    """Aplica ao alvo a codificação interna testada, com phishing positivo."""
+    return np.fromiter((encode_target(str(value)) for value in frame.label),
+                       dtype=np.int64, count=len(frame))
 
 
 def check_partition(y, groups, train, valid):
@@ -35,8 +40,8 @@ def load_rows(partition):
     return frame
 
 
-def grouped_folds(y, groups, folds=CONFIG["cv_folds"]):
-    splitter = StratifiedGroupKFold(folds, shuffle=True, random_state=CONFIG["random_state"])
+def grouped_folds(y, groups, folds=EXPERIMENT["cv_folds"]):
+    splitter = StratifiedGroupKFold(folds, shuffle=True, random_state=EXPERIMENT["random_state"])
     result = list(splitter.split(y, y, groups))
     for train, valid in result:
         check_partition(y, groups, train, valid)
@@ -64,10 +69,10 @@ def reserve():
             continue
     invalid = len(accepted) - len(groups)
     accepted = accepted.loc[list(groups)]
-    y = 1 - accepted["label"].to_numpy()
+    y = target_array(accepted)
     group_array = np.array(list(groups.values()))
-    size = CONFIG["test_size"]
-    splits = GroupShuffleSplit(n_splits=24, test_size=size, random_state=CONFIG["random_state"])
+    size = EXPERIMENT["test_size"]
+    splits = GroupShuffleSplit(n_splits=24, test_size=size, random_state=EXPERIMENT["random_state"])
     train, test = min(
         splits.split(y, y, group_array),
         key=lambda pair: abs(len(pair[1]) / len(y) - size) + abs(y[pair[1]].mean() - y.mean()),
@@ -80,7 +85,7 @@ def reserve():
         "original_labels": before, "retained_phishing": int(y.sum()),
         "registered_domains": len(set(group_array)),
         "rows_with_repeated_domain": int(pd.Series(group_array).duplicated(keep=False).sum()),
-        "seed": CONFIG["random_state"], "strategy": "GroupShuffleSplit e PSL local",
+        "seed": EXPERIMENT["random_state"], "strategy": "GroupShuffleSplit e PSL local",
         "dataset_sha256": UCI_CSV_SHA256,
     }
     for name, part in [("dev", train), ("test", test)]:

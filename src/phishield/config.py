@@ -1,5 +1,6 @@
 """Caminhos e identidade catalogada das fontes."""
 
+import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -15,3 +16,4 @@ ORIGINAL_CLASSES = {"0": "phishing", "1": "legítimo"}
 INTERNAL_CLASSES = {"0": 1, "1": 0}
 DOI = "https://doi.org/10.1016/j.cose.2023.103545"
 MENDELEY = "https://data.mendeley.com/datasets/shwpxscxy2/2"
+EXPERIMENT = json.loads((ROOT / "configs/experiment_config.json").read_text(encoding="utf-8"))

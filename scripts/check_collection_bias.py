@@ -10,21 +10,24 @@ from threadpoolctl import threadpool_limits
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from audit_collection import representation  # noqa: E402
+from phishield.config import EXPERIMENT  # noqa: E402
 from phishield.evaluation import metrics  # noqa: E402
 from phishield.feature_audit import scenario_features  # noqa: E402
 from phishield.feature_extraction import domain_group  # noqa: E402
-from phishield.splitting import grouped_folds, load_rows  # noqa: E402
+from phishield.splitting import grouped_folds, load_rows, target_array  # noqa: E402
 from phishield.training import pipeline, save_json  # noqa: E402
 
 
 def check(freeze_path):
     freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
     frame = load_rows("dev")
-    y = 1 - frame.label.to_numpy()
+    y = target_array(frame)
     groups = frame.URL.map(domain_group).to_numpy()
     train, valid = grouped_folds(y, groups)[0]
     common_format = np.array([all(representation(url).values()) for url in frame.URL.iloc[valid]])
-    rows = StratifiedKFold(5, shuffle=True, random_state=42).split(y, y)
+    rows = StratifiedKFold(
+        EXPERIMENT["cv_folds"], shuffle=True, random_state=EXPERIMENT["random_state"],
+    ).split(y, y)
     result = {"random_group_overlap_by_fold": [len(set(groups[t]) & set(groups[v])) for t, v in rows]}
     features = scenario_features(frame)
     with threadpool_limits(limits=4):

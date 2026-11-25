@@ -5,7 +5,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 
-SEED = 42
+from .config import EXPERIMENT
+
+SEED = EXPERIMENT["random_state"]
 SEARCH = {
     "logistica": {"C": [.1, 1, 10], "class_weight": [None, "balanced"]},
     "arvore": {"max_depth": [8, 16, None], "min_samples_leaf": [3, 15],

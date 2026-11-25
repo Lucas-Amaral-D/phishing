@@ -15,14 +15,14 @@ from sklearn.inspection import permutation_importance
 from sklearn.model_selection import RandomizedSearchCV, StratifiedKFold
 from threadpoolctl import threadpool_limits
 
-from .config import ROOT, UCI_CSV_SHA256
+from .config import EXPERIMENT, ROOT, UCI_CSV_SHA256
 from .data_loader import sha256
 from .evaluation import metrics
 from .feature_audit import scenario_features
 from .feature_extraction import domain_group
 from .models import SEARCH, SEED, models
 from .preprocessing import pipeline_for
-from .splitting import SPLITS, grouped_folds, load_rows
+from .splitting import SPLITS, grouped_folds, load_rows, target_array
 
 EXPERIMENTS = ROOT / "results" / "experiments"
 MODELS = ROOT / "models"
@@ -145,12 +145,13 @@ def conduct(destination, quick):
     frame = load_rows("dev")
     if quick:
         frame = frame.sample(n=min(2500, len(frame)), random_state=SEED)
-    y = 1 - frame.label.to_numpy()
+    y = target_array(frame)
     groups = frame.URL.map(domain_group).to_numpy()
     folds = grouped_folds(y, groups)
     train, valid = folds[0]
     inner = grouped_folds(y[train], groups[train])
-    random = list(StratifiedKFold(5, shuffle=True, random_state=SEED).split(y, y))
+    random = list(StratifiedKFold(EXPERIMENT["cv_folds"], shuffle=True, random_state=SEED)
+                  .split(y, y))
     fold_audit = [
         {"fold": i, "train_rows": len(tr), "validation_rows": len(va),
          "train_phishing_fraction": y[tr].mean(), "validation_phishing_fraction": y[va].mean(),
