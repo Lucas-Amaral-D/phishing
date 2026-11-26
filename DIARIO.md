@@ -1,10 +1,8 @@
-# Diário de desenvolvimento
+# Diário de desenvolvimento do PHISHIELD
 
-## Sessão 01 — 25/11/2026
+**Trabalho acadêmico de Lucas Amaral e Matheus Matsukami.**
 
-### Participantes
-
-- Codex, na implementação e execução desta sessão. Participação dos integrantes do grupo a confirmar.
+## Sessão 01 — 25/11/2026 — Validação da base
 
 ### Objetivo
 
@@ -20,11 +18,7 @@ Executados `git init -b main`, `python -m venv .venv`, `pip install` das ferrame
 
 ### Problemas encontrados
 
-O acesso inicial pelo terminal falhou tanto para a UCI quanto para o índice Python. A instalação apresentou WinError 10013. As novas tentativas com acesso de rede aprovado funcionaram.
-
-### Tentativas que não funcionaram
-
-O primeiro download do ZIP UCI e a primeira instalação das dependências sob as permissões padrão do terminal.
+O primeiro download do ZIP da UCI e a primeira instalação das dependências falharam com as permissões padrão do terminal. A instalação retornou `WinError 10013`. Repetir os comandos com acesso de rede aprovado resolveu os dois problemas.
 
 ### Decisões tomadas e justificativas
 
@@ -40,11 +34,7 @@ As funções de aquisição baixaram ambas as fontes novamente em um diretório 
 
 Auditar duplicatas e conflitos e reservar o conjunto de teste antes da análise exploratória detalhada.
 
-## Sessão 02 — 25/11/2026
-
-### Participantes
-
-- Codex, na implementação e execução. Participação dos integrantes do grupo a confirmar.
+## Sessão 02 — 25/11/2026 — Modelagem, avaliação e protótipo
 
 ### Objetivo
 
@@ -86,17 +76,17 @@ A divisão grupal elimina compartilhamento de domínio, enquanto a auditoria de 
 
 ### Pendências e próximos passos
 
-O roteiro está pronto para ensaio e divisão de falas entre os integrantes. Validação temporal, teste em outra coleta e calibração são extensões de pesquisa. A publicação no GitHub depende de autorização para publicação.
+Ensaiar o roteiro e distribuir as falas entre Lucas Amaral e Matheus Matsukami. Validação temporal, comparação com outra coleta e calibração ficam como extensões de pesquisa.
 
-## Sessão 03 — 25/11/2026
+## Sessão 03 — 25/11/2026 — Revisão técnica e documentação
 
-### Participantes e objetivo
+### Objetivo
 
-Codex realizou a revisão de lacunas do prompt e a implementação complementar.
+Conferir a entrega com o enunciado e completar a documentação acadêmica, a análise exploratória e o registro dos experimentos.
 
 ### Atividades executadas
 
-O README recebeu os itens de apresentação, objetivos, origem, tecnologias, arquitetura, metodologia, ordem dos notebooks, resultados e integrantes pendentes. O relatório passou a seguir a estrutura acadêmica do enunciado e incorporou o gráfico de domínios e a análise de correlações. Os notebooks 02 e 05 foram atualizados e executados.
+O README passou a descrever os objetivos, a origem dos dados, as tecnologias, a arquitetura, a metodologia, a ordem dos notebooks e os resultados. O relatório foi reorganizado de acordo com a estrutura do enunciado e incorporou o gráfico de domínios e a análise de correlações. Os notebooks 02 e 05 foram atualizados e executados.
 
 A reserva passou a conferir hashes e a retomar gravações interrompidas. Novos experimentos guardam índices internos e aleatórios, hashes do código e das dependências e o inventário de arquivos. A reconstrução histórica usou apenas o desenvolvimento, conferiu os cinco folds externos com os arquivos originais e encontrou zero grupos compartilhados em todos os folds internos.
 
@@ -112,4 +102,4 @@ O teste inicial de repetição da reserva encontrou uma diferença entre chaves 
 
 ### Pendências
 
-Identificação dos integrantes, distribuição de falas, publicação mediante autorização e extensões de pesquisa documentadas no relatório.
+Definir a divisão das falas para a apresentação. As extensões de pesquisa estão documentadas no relatório.
