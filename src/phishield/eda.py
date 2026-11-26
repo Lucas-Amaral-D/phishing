@@ -8,6 +8,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 from .config import ROOT  # noqa: E402
+from .feature_extraction import domain_group  # noqa: E402
 from .splitting import load_rows  # noqa: E402
 
 
@@ -45,10 +46,19 @@ def run_eda():
     numeric.groupby("label").agg(["mean", "median", "std"]).T.to_csv(output / "por_classe.csv")
     correlation = numeric.corr()
     correlation.to_csv(output / "correlacao.csv")
+    pairs = correlation.where(np.triu(np.ones(correlation.shape, dtype=bool), k=1)).stack()
+    pairs[pairs.abs().ge(.90)].sort_values(key=abs, ascending=False).rename(
+        "pearson"
+    ).to_csv(output / "correlacoes_altas.csv")
     freq = frame.TLD.value_counts().rename("n").to_frame()
     freq["proporcao"] = freq.n / len(frame)
     freq.to_csv(output / "tld.csv")
     summary["domain_frequency"] = frame.Domain.value_counts().describe().to_dict()
+    sizes = frame.URL.map(domain_group).value_counts().value_counts().sort_index()
+    sizes = sizes.rename("dominios").rename_axis("registros_por_dominio")
+    sizes.to_csv(output / "dominios_registraveis.csv")
+    summary["registered_domains"] = int(sizes.sum())
+    summary["singleton_registered_domains"] = int(sizes.get(1, 0))
     (output / "qualidade.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
 
     fig, axes = plt.subplots(2, 3, figsize=(14, 8), layout="constrained")
@@ -76,5 +86,11 @@ def run_eda():
     axes[1, 2].legend(names)
     axes[1, 2].set(title="Características estruturais", ylabel="Proporção por classe")
     fig.savefig(output / "painel.png", dpi=180)
+    plt.close(fig)
+    fig, ax = plt.subplots(figsize=(7, 4), layout="constrained")
+    ax.scatter(sizes.index, sizes, s=15, color="#25685e")
+    ax.set(xscale="log", yscale="log", title="Tamanho dos grupos no desenvolvimento",
+           xlabel="Registros por domínio registrável", ylabel="Quantidade de domínios")
+    fig.savefig(output / "dominios.png", dpi=180)
     plt.close(fig)
     return summary

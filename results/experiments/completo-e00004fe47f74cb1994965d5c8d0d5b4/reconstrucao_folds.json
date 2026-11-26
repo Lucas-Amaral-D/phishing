@@ -1,0 +1,27 @@
+{
+  "method": "Reconstrução determinística após a execução original",
+  "reference_sha256": "6c98f6625a4bc119caeeb7e43198a82c9724d628af17ae9b9c21396984242b99",
+  "reconstructed_sha256": "46b070d3a5662735389dcd9ced7f589448268dae64770829f84b27a5febf7928",
+  "holdout_rows": 35765,
+  "tuning_validation_rows": [
+    34998,
+    28871,
+    29294,
+    29053,
+    29453
+  ],
+  "tuning_overlapping_groups": [
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "random_overlapping_groups": [
+    2543,
+    2527,
+    2540,
+    2512,
+    2539
+  ]
+}

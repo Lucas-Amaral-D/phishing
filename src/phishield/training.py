@@ -125,6 +125,13 @@ def run(quick=False):
         "python": platform.python_version(), "platform": platform.platform(),
         "sklearn": sklearn.__version__, "seed": SEED, "dataset_sha256": UCI_CSV_SHA256,
         "dev_sha256": sha256(SPLITS / "dev.npy"),
+        "configuration": EXPERIMENT,
+        "source_sha256": {
+            path.relative_to(ROOT).as_posix(): sha256(path)
+            for path in sorted((ROOT / "src" / "phishield").glob("*.py"))
+        },
+        "requirements_sha256": sha256(ROOT / "requirements.txt"),
+        "dataset_release": "UCI 967, publicação de 2024-03-03",
     }
     save_json(destination / "metadata.json", metadata)
     try:
@@ -137,6 +144,7 @@ def run(quick=False):
         metadata.update(state="failed", error=f"{type(error).__name__}: {error}")
         raise
     finally:
+        metadata["outputs"] = sorted(path.name for path in destination.iterdir())
         save_json(destination / "metadata.json", metadata)
     return destination
 
@@ -161,6 +169,10 @@ def conduct(destination, quick):
     save_json(destination / "folds.json", fold_audit)
     np.savez_compressed(destination / "fold_indices.npz", **{
         f"validation_{i}": frame.index[va].to_numpy() for i, (_, va) in enumerate(folds)
+    })
+    np.savez_compressed(destination / "fold_indices_internal_random.npz", **{
+        **{f"tuning_{i}": frame.index[train[va]].to_numpy() for i, (_, va) in enumerate(inner)},
+        **{f"random_{i}": frame.index[va].to_numpy() for i, (_, va) in enumerate(random)},
     })
     variants = scenario_features(frame)
     config = {

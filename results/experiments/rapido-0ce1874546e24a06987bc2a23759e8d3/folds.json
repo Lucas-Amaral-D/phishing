@@ -1,0 +1,42 @@
+[
+  {
+    "fold": 0,
+    "train_rows": 2000,
+    "validation_rows": 500,
+    "train_phishing_fraction": 0.4135,
+    "validation_phishing_fraction": 0.422,
+    "group_overlap": 0
+  },
+  {
+    "fold": 1,
+    "train_rows": 2011,
+    "validation_rows": 489,
+    "train_phishing_fraction": 0.41223272003978123,
+    "validation_phishing_fraction": 0.4274028629856851,
+    "group_overlap": 0
+  },
+  {
+    "fold": 2,
+    "train_rows": 2004,
+    "validation_rows": 496,
+    "train_phishing_fraction": 0.41367265469061876,
+    "validation_phishing_fraction": 0.4213709677419355,
+    "group_overlap": 0
+  },
+  {
+    "fold": 3,
+    "train_rows": 2004,
+    "validation_rows": 496,
+    "train_phishing_fraction": 0.4126746506986028,
+    "validation_phishing_fraction": 0.4254032258064516,
+    "group_overlap": 0
+  },
+  {
+    "fold": 4,
+    "train_rows": 1981,
+    "validation_rows": 519,
+    "train_phishing_fraction": 0.42402826855123676,
+    "validation_phishing_fraction": 0.3815028901734104,
+    "group_overlap": 0
+  }
+]

@@ -276,5 +276,7 @@
     "50%": 1.0,
     "75%": 1.0,
     "max": 1115.0
-  }
+  },
+  "registered_domains": 158162,
+  "singleton_registered_domains": 152601
 }

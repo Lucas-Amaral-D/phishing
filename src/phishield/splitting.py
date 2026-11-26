@@ -1,12 +1,14 @@
 """Preparação da reserva e verificação de partições independentes."""
 import json
+from hashlib import sha256 as digest
+from io import BytesIO
 
 import numpy as np
 import pandas as pd
 from sklearn.model_selection import GroupShuffleSplit, StratifiedGroupKFold
 
 from .config import EXPERIMENT, RAW, ROOT, UCI_CSV, UCI_CSV_SHA256
-from .data_loader import sha256
+from .data_loader import _publish_stream, sha256
 from .data_validation import TEXT_COLUMNS, encode_target
 from .feature_extraction import domain_group
 
@@ -20,20 +22,33 @@ def target_array(frame):
 
 
 def check_partition(y, groups, train, valid):
-    if len(np.unique(np.r_[train, valid])) != len(y):
-        raise ValueError("Partição incompleta ou com sobreposição.")
-    if np.intersect1d(train, valid).size or set(groups[train]) & set(groups[valid]):
-        raise ValueError("Registros ou domínios compartilhados.")
+    if not np.array_equal(np.sort(np.r_[train, valid]), np.arange(len(y))):
+        raise ValueError("Partição incompleta ou com índices inválidos ou compartilhados.")
+    if set(groups[train]) & set(groups[valid]):
+        raise ValueError("Domínios compartilhados.")
     if len(np.unique(y[train])) != 2 or len(np.unique(y[valid])) != 2:
         raise ValueError("Partição sem ambas as classes.")
 
 
+def partition_path(partition, manifest):
+    if partition not in {"dev", "test"}:
+        raise ValueError("Partição desconhecida.")
+    path = SPLITS / f"{partition}.npy"
+    if sha256(path) != manifest[partition]["sha256"]:
+        raise ValueError(f"Hash da partição {partition} divergente.")
+    return path
+
+
 def load_rows(partition):
-    indices = np.sort(np.load(SPLITS / f"{partition}.npy", allow_pickle=False))
+    manifest = json.loads((SPLITS / "manifest.json").read_text(encoding="utf-8"))
+    raw = RAW / UCI_CSV
+    if manifest["dataset_sha256"] != UCI_CSV_SHA256 or sha256(raw) != UCI_CSV_SHA256:
+        raise ValueError("Arquivo UCI divergente.")
+    indices = np.sort(np.load(partition_path(partition, manifest), allow_pickle=False))
     include = set(indices + 1)
     dtypes = {column: "string" for column in TEXT_COLUMNS}
     frame = pd.read_csv(
-        RAW / UCI_CSV, dtype=dtypes, skiprows=lambda row: row != 0 and row not in include,
+        raw, dtype=dtypes, skiprows=lambda row: row != 0 and row not in include,
         keep_default_na=False,
     )
     frame.index = indices
@@ -54,12 +69,20 @@ def reserve():
     path = RAW / UCI_CSV
     if sha256(path) != UCI_CSV_SHA256:
         raise ValueError("Arquivo UCI divergente.")
+    manifest = SPLITS / "manifest.json"
+    if manifest.is_file():
+        report = json.loads(manifest.read_text(encoding="utf-8"))
+        if report["dataset_sha256"] != UCI_CSV_SHA256 or report["seed"] != EXPERIMENT["random_state"]:
+            raise ValueError("Manifesto da reserva incompatível com a configuração.")
+        for name in ("dev", "test"):
+            partition_path(name, report)
+        return report
     frame = pd.read_csv(path, dtype={column: "string" for column in TEXT_COLUMNS}, keep_default_na=False)
     exact = int(frame.drop(columns="FILENAME").duplicated().sum())
     frame["url_key"] = frame["URL"].str.rstrip("/")
     duplicate_urls = int(frame["url_key"].duplicated().sum())
     conflicts = frame.groupby("url_key")["label"].transform("nunique").gt(1)
-    before = frame["label"].value_counts().to_dict()
+    before = {str(label): count for label, count in frame["label"].value_counts().items()}
     accepted = frame.loc[~conflicts].drop_duplicates("url_key").copy()
     groups = {}
     for row, url in accepted["URL"].items():
@@ -90,11 +113,15 @@ def reserve():
     }
     for name, part in [("dev", train), ("test", test)]:
         target = SPLITS / f"{name}.npy"
-        with target.open("xb") as stream:
-            np.save(stream, accepted.index.to_numpy()[part], allow_pickle=False)
+        stream = BytesIO()
+        np.save(stream, accepted.index.to_numpy()[part], allow_pickle=False)
+        checksum = digest(stream.getbuffer()).hexdigest()
+        stream.seek(0)
+        _publish_stream(stream, target, checksum)
         report[name] = {
             "rows": len(part), "groups": len(set(group_array[part])),
-            "phishing": int(y[part].sum()), "sha256": sha256(target),
+            "phishing": int(y[part].sum()), "sha256": checksum,
         }
-    (SPLITS / "manifest.json").write_text(json.dumps(report, indent=2), encoding="utf-8")
+    content = json.dumps(report, indent=2).encode("utf-8")
+    _publish_stream(BytesIO(content), manifest, digest(content).hexdigest())
     return report
