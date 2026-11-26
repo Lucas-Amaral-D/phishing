@@ -87,3 +87,29 @@ A divisão grupal elimina compartilhamento de domínio, enquanto a auditoria de 
 ### Pendências e próximos passos
 
 O roteiro está pronto para ensaio e divisão de falas entre os integrantes. Validação temporal, teste em outra coleta e calibração são extensões de pesquisa. A publicação no GitHub depende de autorização para publicação.
+
+## Sessão 03 — 25/11/2026
+
+### Participantes e objetivo
+
+Codex realizou a revisão de lacunas do prompt e a implementação complementar.
+
+### Atividades executadas
+
+O README recebeu os itens de apresentação, objetivos, origem, tecnologias, arquitetura, metodologia, ordem dos notebooks, resultados e integrantes pendentes. O relatório passou a seguir a estrutura acadêmica do enunciado e incorporou o gráfico de domínios e a análise de correlações. Os notebooks 02 e 05 foram atualizados e executados.
+
+A reserva passou a conferir hashes e a retomar gravações interrompidas. Novos experimentos guardam índices internos e aleatórios, hashes do código e das dependências e o inventário de arquivos. A reconstrução histórica usou apenas o desenvolvimento, conferiu os cinco folds externos com os arquivos originais e encontrou zero grupos compartilhados em todos os folds internos.
+
+### Tentativas, dificuldades e decisões
+
+O teste inicial de repetição da reserva encontrou uma diferença entre chaves inteiras na memória e chaves textuais no JSON. O retorno inicial foi alinhado à representação persistida. O modo rápido emitiu o aviso anterior de indisponibilidade do WMIC e completou a execução com o fallback em processadores lógicos.
+
+### Resultados e evidências
+
+- 40 testes Pytest aprovados e verificações Ruff e `pip check` aprovadas.
+- [Execução técnica de verificação](results/experiments/rapido-0ce1874546e24a06987bc2a23759e8d3/metadata.json) completou treinamento rápido e gerou os novos registros.
+- [Auditoria dos folds internos](results/experiments/completo-e00004fe47f74cb1994965d5c8d0d5b4/reconstrucao_folds.json) e [gráfico dos domínios](results/exploracao/dominios.png) foram produzidos a partir do desenvolvimento. A avaliação única do teste permaneceu registrada nos artefatos da sessão anterior.
+
+### Pendências
+
+Identificação dos integrantes, distribuição de falas, publicação mediante autorização e extensões de pesquisa documentadas no relatório.
